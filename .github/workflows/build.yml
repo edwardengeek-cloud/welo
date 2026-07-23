@@ -24,4 +24,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: weloma-aidoku
-          path: en.weloma/target/wasm32-unknown-unknown/release/libweloma_aidoku.wasm   # Fixed name
+          path: en.weloma/target/wasm32-unknown-unknown/release/libweloma_aidoku.wasm
