@@ -16,21 +16,21 @@ fn get_manga_list(_filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
 
 #[get_manga_details]
 fn get_manga_details(manga_id: String) -> Result<Manga> {
-    let url = format!("{}{}", BASE_URL, if manga_id.starts_with('/') { manga_id } else { format!("/{}", manga_id) });
+    let url = format!("{}{}", BASE_URL, if manga_id.starts_with('/') { &manga_id } else { &format!("/{}", manga_id) });
     let html = Request::new(url.as_str(), HttpMethod::Get).html()?;
     parser::parse_manga_details(html, manga_id)
 }
 
 #[get_chapter_list]
 fn get_chapter_list(manga_id: String) -> Result<Vec<Chapter>> {
-    let url = format!("{}{}", BASE_URL, if manga_id.starts_with('/') { manga_id } else { format!("/{}", manga_id) });
+    let url = format!("{}{}", BASE_URL, if manga_id.starts_with('/') { &manga_id } else { &format!("/{}", manga_id) });
     let html = Request::new(url.as_str(), HttpMethod::Get).html()?;
     parser::parse_chapter_list(html)
 }
 
 #[get_page_list]
 fn get_page_list(_manga_id: String, chapter_id: String) -> Result<Vec<Page>> {
-    let url = format!("{}{}", BASE_URL, if chapter_id.starts_with('/') { chapter_id } else { format!("/{}", chapter_id) });
+    let url = format!("{}{}", BASE_URL, if chapter_id.starts_with('/') { &chapter_id } else { &format!("/{}", chapter_id) });
     let html = Request::new(url.as_str(), HttpMethod::Get).html()?;
     parser::parse_page_list(html)
 }
