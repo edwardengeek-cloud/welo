@@ -4,11 +4,10 @@ pub const BASE_URL: &str = "https://weloma.art";
 
 pub fn parse_manga_list(html: Node) -> Result<MangaPageResult> {
     let mut manga: Vec<Manga> = Vec::new();
-    for node in html.select("div.list-manga a, article, .manga-item").array() {
+    for node in html.select("a[href*='/m/']").array() {
         let node = node.as_node();
-        let href = node.select("a").attr("href").read();
-        if href.is_empty() { continue; }
-        let title = node.select("h3, h2, .title, .name").text().read().trim().to_string();
+        let href = node.attr("href").read();
+        let title = node.select("h3, h2, .title").text().read().trim().to_string();
         let cover = node.select("img").attr("src").read();
 
         if !title.is_empty() {
@@ -26,8 +25,8 @@ pub fn parse_manga_list(html: Node) -> Result<MangaPageResult> {
 
 pub fn parse_manga_details(html: Node, id: String) -> Result<Manga> {
     let title = html.select("h1, .series-name, .title").text().read().trim().to_string();
-    let description = html.select(".description, .summary, .content").text().read().trim().to_string();
-    let cover = html.select("img.cover, .poster img, img[src*='cover']").attr("src").read();
+    let description = html.select(".description, .summary").text().read().trim().to_string();
+    let cover = html.select("img").attr("src").read();
 
     Ok(Manga {
         id,
@@ -41,25 +40,26 @@ pub fn parse_manga_details(html: Node, id: String) -> Result<Manga> {
 
 pub fn parse_chapter_list(html: Node) -> Result<Vec<Chapter>> {
     let mut chapters: Vec<Chapter> = Vec::new();
-    for node in html.select(".list-chapters a, .chapter-item a, a[href*='/c/']").array() {
+    for node in html.select("a[href*='/c/']").array() {
         let node = node.as_node();
         let href = node.attr("href").read();
         let title = node.select(".chapter-name, .title").text().read().trim().to_string();
-        if href.is_empty() { continue; }
 
-        chapters.push(Chapter {
-            id: href.clone(),
-            title: if title.is_empty() { "Chapter".to_string() } else { title },
-            url: format!("{}{}", BASE_URL, href),
-            ..Default::default()
-        });
+        if !href.is_empty() {
+            chapters.push(Chapter {
+                id: href.clone(),
+                title: if title.is_empty() { "Chapter".to_string() } else { title },
+                url: format!("{}{}", BASE_URL, href),
+                ..Default::default()
+            });
+        }
     }
     Ok(chapters)
 }
 
 pub fn parse_page_list(html: Node) -> Result<Vec<Page>> {
     let mut pages: Vec<Page> = Vec::new();
-    for (i, node) in html.select("img[src*='uploads'], .reader img, #chapter-content img, img.lazy").array().enumerate() {
+    for (i, node) in html.select("img").array().enumerate() {
         let url = node.as_node().attr("src").read().trim().to_string();
         if url.is_empty() || url.contains("data:") { continue; }
 
