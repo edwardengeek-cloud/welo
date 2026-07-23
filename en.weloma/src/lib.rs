@@ -12,6 +12,20 @@ use aidoku::{
 
 const BASE_URL: &str = "https://weloma.art";
 
+struct WeLoMaSource;
+
+impl Source for WeLoMaSource {
+    fn new() -> Self {
+        Self
+    }
+}
+
+impl ListingProvider for WeLoMaSource {
+    fn get_manga_listing(&self, listing: Listing, page: i32) -> Result<MangaPageResult> {
+        get_manga_list(Vec::new(), page)
+    }
+}
+
 #[get_manga_list]
 fn get_manga_list(_filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
     let url = format!("{}/manga-list.html?sort=last_update&sort_type=DESC&page={}", BASE_URL, page);
@@ -26,7 +40,7 @@ fn get_manga_list(_filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
 fn get_manga_details(manga_id: String) -> Result<Manga> {
     Ok(Manga {
         key: manga_id,
-        title: String::from("WeLoMa Manga"),
+        title: String::from("WeLoMa"),
         ..Default::default()
     })
 }
@@ -48,3 +62,5 @@ pub fn handle_url(_url: String) -> Result<DeepLink> {
         chapter: None,
     })
 }
+
+register_source!(WeLoMaSource);
