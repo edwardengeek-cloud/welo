@@ -16,7 +16,6 @@ const BASE_URL: &str = "https://weloma.art";
 fn get_manga_list(_filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
     let url = format!("{}/manga-list.html?sort=last_update&sort_type=DESC&page={}", BASE_URL, page);
     let _html = Request::new(url.as_str(), HttpMethod::Get).html()?;
-    
     Ok(MangaPageResult {
         entries: Vec::new(),
         has_next_page: true,
@@ -27,7 +26,7 @@ fn get_manga_list(_filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
 fn get_manga_details(manga_id: String) -> Result<Manga> {
     Ok(Manga {
         key: manga_id,
-        title: "Test".to_string(),
+        title: String::from("Test Manga"),
         ..Default::default()
     })
 }
